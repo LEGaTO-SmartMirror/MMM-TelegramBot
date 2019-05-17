@@ -20,7 +20,7 @@
 Module.register("MMM-TelegramBot", {
   defaults: {
     allowedUser: [],
-    alertTimer: "30000"
+    alertTimer: "10000"
   },
   //requiresVersion: "2.1.2", // Required version of MagicMirror
 
@@ -93,6 +93,22 @@ Module.register("MMM-TelegramBot", {
   },
 
   getCommands: function(Register) {
+    Register.add({
+      command: 'say',
+      description: 'Let the mirror say something',
+      callback: 'command_sayit'
+    })
+    Register.add({
+      command: 'sag',
+      description: 'Lass den Spiegel was sagen',
+      callback: 'command_sages'
+    })
+    Register.add({
+      command: 'pubNot',
+      description: 'Publish a Notification to all modules',
+      callback: 'command_pubNot'
+    })
+
     var defaultCommands = [
       {
         command: 'help',
@@ -501,4 +517,30 @@ Module.register("MMM-TelegramBot", {
         break;
     }
   },
+  command_sayit : function(command, handler){
+	var sentence
+	if (handler.args !== null) {
+		//sentence = handler.message.from.first_name + " says "
+      		sentence = handler.args
+		this.sendNotification('smartmirror-TTS-en', sentence);
+	}
+  },
+  command_sages : function(command, handler){
+	var sentence
+	if (handler.args !== null) {
+		//sentence = handler.message.from.first_name + " sagt "
+      		sentence = handler.args
+		this.sendNotification('smartmirror-TTS-ger', sentence);s
+	}
+  },
+
+  command_pubNot : function(command, handler){
+	var message = handler.args.substr(handler.args.indexOf(' ')+1);
+        var com = handler.args.substr(0,handler.args.indexOf(' '));
+
+	console.log("[" + this.name + "] scope: " + message[0] + " payload: " + message[1]);
+
+	this.sendNotification(com, message);
+  }
+
 })
